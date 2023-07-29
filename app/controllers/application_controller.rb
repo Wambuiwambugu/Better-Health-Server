@@ -11,20 +11,12 @@ class ApplicationController < Sinatra::Base
     users.to_json
   end
 
-  get '/users/:name' do 
-    user = User.find(params[:name]) 
-    user.to_json
+  get '/users/:id' do 
+    user = User.find(params[:id]) 
+    user.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
   end
 
-  get '/prescriptions' do 
-    prescriptions = Prescription.all
-    prescription.to_json
-  end
-
-  get '/prescriptions/:id' do
-    prescription = Prescription.find(params[:id])
-    prescription.to_json(include: :comments)
-  end
+  
 
   post '/signup' do
     user = User.create(
