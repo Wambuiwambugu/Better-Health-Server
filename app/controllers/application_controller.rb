@@ -16,6 +16,21 @@ class ApplicationController < Sinatra::Base
     user.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
   end
 
+  post '/users/login' do
+    email_address = params[:email_address]
+    password = params[:password]
+    user = User.find_by(email_address: email_address,password: password)
+    if user
+      username = user.name
+      response = {id: user.id, username: username}
+      response.to_json
+    else
+      status 404
+      response = { message: "Login unsuccessful! Please try again" }
+      response.to_json
+    end
+  end
+
   
 
   post '/signup' do
@@ -28,11 +43,28 @@ class ApplicationController < Sinatra::Base
 
   end
 
+  # post '/prescriptions' do
+  # end
+
   delete '/prescriptions/:id' do
     prescription = Prescription.find(params[id])
     prescription.destroy 
     prescription.to_json
   end
+
+  delete '/comments/:id' do
+    comment = Comment.find(params[:id])
+    comment.destroy
+    comment.to_json
+  end
+
+  delete '/reminders/:id' do
+    reminder = Reminder.find(params[:id])
+    reminder.destroy
+    reminder.to_json
+  end
+
+  
 
 
 end
