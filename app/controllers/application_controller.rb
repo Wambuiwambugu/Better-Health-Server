@@ -55,6 +55,16 @@ class ApplicationController < Sinatra::Base
     prescription.to_json
   end
 
+  patch '/prescription/:id' do
+    prescription = Prescription.find(params[:id])
+    prescription.update(
+      dosage: params[:dosage],
+      duration: params[:duration],
+      instructions: params[:instructions]
+    )
+    prescription.to_json
+  end
+
   post '/comments' do 
     comment = Comment.create(
       comment: params[:comment],
