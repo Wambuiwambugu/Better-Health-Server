@@ -21,9 +21,8 @@ class ApplicationController < Sinatra::Base
     password = params[:password]
     user = User.find_by(email_address: email_address,password: password)
     if user
-      username = user.name
-      response = {id: user.id, username: username}
-      response.to_json
+      response = user
+      response.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
     else
       status 404
       response = { message: "Login unsuccessful! Please try again" }
@@ -39,7 +38,8 @@ class ApplicationController < Sinatra::Base
       email_address: params[:email_address],
       password: params[:password]
     )
-    user.to_json
+    user.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
+    
 
   end
 
@@ -48,6 +48,10 @@ class ApplicationController < Sinatra::Base
 
   delete '/prescriptions/:id' do
     prescription = Prescription.find(params[id])
+    prescription_comments = prescription.comments
+    prescription_reminders = prescription.reminders
+    prescription_comments.destroy_all
+    prescription_reminders.destroy_all
     prescription.destroy 
     prescription.to_json
   end
