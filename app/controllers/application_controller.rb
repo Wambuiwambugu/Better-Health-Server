@@ -16,7 +16,7 @@ class ApplicationController < Sinatra::Base
     user.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
   end
 
-  post '/users/login' do
+  post '/login' do
     email_address = params[:email_address]
     password = params[:password]
     user = User.find_by(email_address: email_address)
@@ -38,8 +38,8 @@ class ApplicationController < Sinatra::Base
       email_address: params[:email_address],
       password: params[:password]
     )
-    response = { message: "signed up successfully" }
-    response.to_json
+    # r
+    user.to_json
     
 
   end
