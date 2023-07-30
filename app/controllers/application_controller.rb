@@ -73,10 +73,8 @@ class ApplicationController < Sinatra::Base
 
   delete '/prescriptions/:id' do
     prescription = Prescription.find(params[id])
-    prescription_comments = prescription.comments
-    prescription_reminders = prescription.reminders
-    prescription_comments.destroy_all
-    prescription_reminders.destroy_all
+    prescription.comments.destroy_all
+    prescription.reminders.destroy_all
     prescription.destroy 
     prescription.to_json
   end
