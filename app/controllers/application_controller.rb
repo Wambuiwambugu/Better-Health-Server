@@ -19,14 +19,9 @@ class ApplicationController < Sinatra::Base
   post '/users/login' do
     email_address = params[:email_address]
     password = params[:password]
-    user = User.find_by(email_address: email_address,password: password)
-    if user
-      response = user
-      response.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
-    else
-      status 404
-      response = { message: "Login unsuccessful! Please try again" }
-      response.to_json
+    user = User.find_by(email_address: email_address)
+    if user 
+      user.to_json
     end
   end
 
