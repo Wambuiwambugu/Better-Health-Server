@@ -20,8 +20,13 @@ class ApplicationController < Sinatra::Base
     email_address = params[:email_address]
     password = params[:password]
     user = User.find_by(email_address: email_address)
-    if user 
-      user.to_json
+    if user && user.password == password
+      response ={ id: user.id, name: user.name }
+      response.to_json
+    else
+      status 404
+      response ={ error: 'User not found.' }
+      response.to_json
     end
   end
 
@@ -33,13 +38,38 @@ class ApplicationController < Sinatra::Base
       email_address: params[:email_address],
       password: params[:password]
     )
-    user.to_json(include: {prescriptions: {include: [:comments, :reminders]}})
+    response = { message: "signed up successfully" }
+    response.to_json
     
 
   end
 
-  # post '/prescriptions' do
-  # end
+  post '/prescriptions' do
+    prescription = Prescription.create(
+      name: params[:name],
+      dosage: params[:dosage],
+      duration: params[:duration],
+      instructions: params[:instructions],
+      user_id: params[:user_id]
+    )
+    prescription.to_json
+  end
+
+  post '/comments' do 
+    comment = Comment.create(
+      comment: params[:comment],
+      prescription_id: params[:prescription_id]
+    )
+    comment.to_json
+  end
+
+  post '/reminders' do 
+    reminder = Reminder.create(
+      message: params[:reminder],
+      prescription_id: params[:prescription_id]
+    )
+    comment.to_json
+  end
 
   delete '/prescriptions/:id' do
     prescription = Prescription.find(params[id])
